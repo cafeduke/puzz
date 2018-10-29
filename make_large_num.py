@@ -1,3 +1,7 @@
+'''
+Arrange a list of numbers such that the number resulting by joining them is the largest possible.
+'''
+
 import functools
 from functional import seq
 
@@ -26,10 +30,12 @@ def cmp (a, b):
 def cmp_large(a, b):
     '''
     Comparator to compare two integers based on most significant number (left most) first.
-    A number with fewer digits is considered to be greater than the one with fewer digits. Eg: 7 < 78 because 778 < 787
+    A number with fewer digits is considered to be greater than the one with fewer digits. 
+        Eg :  7 < 78  because   778 <   787
+        Eg : 77 > 771 because 77771 > 77177
     
     Parameters
-    ----------d
+    ----------
     a : integer
         First integer to be compared
 
