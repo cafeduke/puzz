@@ -3,10 +3,10 @@ def get_largest_subset (num):
     begin = end = None
     sav_begin = sav_end = None
 
-    # curr_total : Tracks the current subset's total (including the negatives encountered at the tail).
     # sav_total  : Tracks the previous subset's total
-    # be_total   : Tracks the total from begin index to end index (excluding the negatives encoutered at the tail)
-    sav_total = be_total = None
+    sav_total = None
+
+    # curr_total : Tracks the current subset's total (including the negatives encountered at the tail).
     curr_total = 0
 
     # If true, start hunting for the next postive number.
@@ -15,16 +15,16 @@ def get_largest_subset (num):
     def do_save ():
         ''' record if begin-end-subset is greater than the saved one '''
         nonlocal sav_total, sav_begin, sav_end
-        if  sav_total is None or be_total > sav_total:
-            sav_total = be_total
+        if  sav_total is None or curr_total > sav_total:
+            sav_total = curr_total
             sav_begin = begin
             sav_end   = end  
 
     def do_save_neg (i, x):
         ''' if nothing is saved and 'x' is negative, save the largest 'x'. Index of 'x' shall be the begin and end '''
-        nonlocal sav_total, sav_begin, sav_end, be_total       
+        nonlocal sav_total, sav_begin, sav_end
         if sav_total is None or x > sav_total:
-            sav_total = be_total = x
+            sav_total = x
             sav_begin = sav_end  = i
 
     for i, x in enumerate(num):
@@ -44,30 +44,26 @@ def get_largest_subset (num):
         
         # Adding x to curr total still keeps it positive
         if curr_total + x >= 0:
-            # Take 'x' in as the result is still positive (even if 'x' is negative)
+            if x < 0:
+                do_save ()
             curr_total = curr_total + x
-
-            # Only if 'x' is positive, we move the 'end' index and hence update the begin-to-end total.
-            if x > 0:
-                be_total = curr_total
-                end = i
-            # If 'x' is negative, record if begin-end-subset is greater than the saved one.
-            elif x < 0:
-                do_save ()     
-            print ('Begin={0} End={1} BE_Total={2} CurrTotal={3} SavTotal={4}'.format(begin, end, be_total, curr_total, sav_total))
+            end = i
+            print ('Begin={0} End={1} CurrTotal={2} SavTotal={3}'.format(begin, end, curr_total, sav_total))
         else:
             # Adding x has just made curr_total go negative or zero. The current quest ends here. 
             # Time to start finding a new subset
             # First, record if begin-end-subset is greater than the saved one.
             do_save ()
-            print ('Begin={0} End={1} BE_Total={2} CurrTotal={3} SavTotal={4}'.format(begin, end, be_total, curr_total, sav_total))
+            print ('Begin={0} End={1} CurrTotal={2} SavTotal={3}'.format(begin, end, curr_total, sav_total))
         
             # Time to reset stuff
             find_next_positive = True
             begin = end = None
-            be_total = curr_total = 0
+            curr_total = 0
+    
+    if sav_total > 0:
+        do_save()
 
-    do_save()
     return sav_begin, sav_end
 
 
